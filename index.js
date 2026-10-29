@@ -952,8 +952,14 @@ fastify.get('/api/resolve', async (request, reply) => {
     }
 });
 
-const PORT = process.env.PORT ? process.env.PORT : 3000;
-fastify.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
-    if (err) console.error(err);
-    else console.log(`🚀 API running on port ${PORT}`);
-});
+// Vercel එකේදී fastify.listen() කරන්නේ නෑ (serverless function එකක් විදිහට api/index.js
+// හරහා request handle කරනවා). local/Railway වගේ සාමාන්‍ය server එකක් විදිහට run කරනකොටම listen කරනවා.
+export default fastify;
+
+if (!process.env.VERCEL) {
+    const PORT = process.env.PORT ? process.env.PORT : 3000;
+    fastify.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
+        if (err) console.error(err);
+        else console.log(`🚀 API running on port ${PORT}`);
+    });
+}
